@@ -30,4 +30,4 @@ while game_is_on:
     time.sleep(0.1)
 
 my_screen.exitonclick()
-# end
+# end test 2.0
