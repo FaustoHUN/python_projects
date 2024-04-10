@@ -1,7 +1,9 @@
 import turtle
 from turtle import Screen
 import time
+from food import Food
 from snake import Snake
+from scoreboard import Scoreboard
 
 # SCREEN SETUP SECTION
 
@@ -18,16 +20,38 @@ my_screen.update()
 game_is_on = True
 
 my_snake = Snake()
+my_food = Food()
+my_board = Scoreboard()
+
+my_screen.listen()
+my_screen.onkey(fun=my_snake.up, key="Up")
+my_screen.onkey(fun=my_snake.down, key="Down")
+my_screen.onkey(fun=my_snake.left, key="Left")
+my_screen.onkey(fun=my_snake.right, key="Right")
 
 while game_is_on:
-    my_snake.snake_move()
-    my_screen.listen()
-    my_screen.onkey(fun=my_snake.up, key="Up")
-    my_screen.onkey(fun=my_snake.down, key="Down")
-    my_screen.onkey(fun=my_snake.left, key="Left")
-    my_screen.onkey(fun=my_snake.right, key="Right")
     my_screen.update()
-    time.sleep(0.1)
+    time.sleep(0.1)  # slows down the turtle
+    my_snake.snake_move()
+
+    # Detect collision with the food
+    if my_snake.head.distance(my_food) < 15:
+        my_food.refresh()
+        my_snake.extend()
+        my_board.increase_score()
+
+    # Detect collision with the wall
+    if my_snake.head.xcor() > 290 or my_snake.head.xcor() < -290 or my_snake.head.ycor() > 290 or my_snake.head.ycor() < -290:
+        game_is_on = False
+        my_board.game_over()
+
+    # Detect collision with the wall
+    # if head collides with any segment in the tail
+    # game ends
+
+    for segment in my_snake.segments[1:]:
+        if my_snake.head.distance(segment) < 10:
+            game_is_on = False
+            my_board.game_over()
 
 my_screen.exitonclick()
-# end test 2.0
